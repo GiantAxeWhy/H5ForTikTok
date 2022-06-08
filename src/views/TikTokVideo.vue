@@ -84,6 +84,15 @@
               <div class="tools_r_num">22.2w</div>
             </div>
           </div>
+          <div class="advertise">
+            <img src="../assets/gouwuche3.png" style="width:30px;height:25px" />
+            <div>
+              <span>电信千兆光宽 | </span>
+              <button style="background:#FF6701; border-radius: 20%;">
+                立即下单
+              </button>
+            </div>
+          </div>
           <!-- 底部作品描述 -->
           <div class="production_box">
             <div class="production_name">@{{ item.author }}</div>
@@ -969,12 +978,24 @@ video {
   text-shadow: 0px 0px 10px #9d9d9d;
   /*transition: .5s;*/
 }
-
+.advertise {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  position: absolute;
+  bottom: 140px;
+  text-align: center;
+  height: 30px;
+  color: #fff;
+  left: 15px;
+  background: rgba(0, 0, 0, 0.35);
+}
 .production_box {
   z-index: 1001;
   position: absolute;
   /* right: 16px; */
-  bottom: 48px;
+  bottom: 15px;
   text-align: left;
   padding: 0 15px 15px 15px;
   color: #fff;
@@ -1009,16 +1030,6 @@ video {
   -webkit-box-orient: vertical;
   min-height: 62px;
   font-size: 13px;
-}
-
-.container_bottom {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  height: 48px;
-  /*border-top: 1px solid rgba(255, 255, 255, 0.7);*/
-  max-width: 550px;
 }
 
 .production_top {
