@@ -13,7 +13,7 @@
           :key="index"
           class="product_swiper"
         >
-          <div class="video_container">
+          <div class="video_container" id="imageTofile">
             <!--video属性
                     webkit-playsinline ios 小窗播放，使视频不脱离文本流，安卓则无效
                     微信内置x5内核，
@@ -24,6 +24,7 @@
                     src：播放地址
                     -->
             <video
+              id="videoToImg"
               style="width: 100%; height:100vh;object-fit:fill"
               class="video_box"
               loop
@@ -38,6 +39,7 @@
               @click="pauseVideo"
               @ended="onPlayerEnded($event)"
             ></video>
+            <image :src="src" style="width: 100%;height: 35vh;"></image>
             <!-- 封面 -->
             <img
               v-show="isVideoShow"
@@ -107,7 +109,7 @@
       <div class="share_box" :class="showShareBox ? 'share_active' : ''">
         <div class="share_tips">分享到</div>
         <ul class="share_ul">
-          <li class="share_li pengyouquan_li">
+          <li class="share_li pengyouquan_li" @click="imgToCanvas">
             <i class="iconfont icon-pengyouquan pengyouquan"></i>
           </li>
           <li class="share_li">
@@ -257,10 +259,15 @@ import TikTokVideo from "./TikTokVideo.vue";
 import collectVideo from "./collectVideo.vue";
 // 引入微信分享
 import wx from "weixin-js-sdk";
+//引入截图
+import html2canvas from "html2canvas";
 Vue.use(Swipe, Toast).use(SwipeItem);
 
 let videoProcessInterval;
 export default {
+  components: {
+    html2canvas,
+  },
   name: "TikTokVideo",
   data() {
     let u = navigator.userAgent;
@@ -292,7 +299,8 @@ export default {
           des: "中国加油",
         },
         {
-          url: "https://www.douyin.com/video/6957891939144322307",
+          url:
+            "https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218093206z8V1JuPlpe.mp4",
           cover: "http://oss.jishiyoo.com/images/file-1575343262684.jpg",
           tag_image:
             "http://npjy.oss-cn-beijing.aliyuncs.com/images/file-1575449277018pF3XL.jpg",
@@ -431,6 +439,7 @@ export default {
       replayUserData: "",
       to_comment_id: "",
       videoProcess: 0, //视频播放进度
+      src: "",
     };
   },
   watch: {
@@ -788,6 +797,19 @@ export default {
       oInput.className = "oInput";
       oInput.style.display = "none";
       alert("链接复制成功");
+    },
+    imgToCanvas() {
+      // 第一个参数是需要生成截图的元素,第二个是自己需要配置的参数,宽高等
+      let _this = this;
+      console.log(document.getElementById("videoToImg"));
+      html2canvas(document.getElementById("videoToImg"), {
+        backgroundColor: null, //画出来的图片有白色的边框,不要可设置背景为透明色（null）
+        useCORS: true, //支持图片跨域
+        scale: 1, //设置放大的倍数
+      }).then((canvas) => {
+        let url = canvas.toDataURL("image/png");
+        this.src = url;
+      });
     },
   },
 };

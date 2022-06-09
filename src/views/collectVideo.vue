@@ -1,13 +1,35 @@
 <template>
   <div class="container">
+    <div v-if="isShowVideo">
+      <video
+        style="width: 100%; height:100vh;object-fit:fill"
+        loop
+        webkit-playsinline="true"
+        x5-video-player-type="h5-page"
+        x5-video-player-fullscreen="true"
+        playsinline
+        preload="auto"
+        :src="videoUrl"
+        @click="pauseVideo(current)"
+        :playOrPause="playOrPause"
+      ></video>
+      <img
+        v-show="iconPlayShow"
+        class="icon_play"
+        @click="playvideo(index)"
+        src="../static/video/icon_play.png"
+      />
+    </div>
+
     <mescroll-vue
+      v-else
       ref="mescroll"
       :down="mescrollDown"
       :up="mescrollUp"
       @init="mescrollInit"
     >
       <div v-for="(item, index) in dataList" :key="item.id" class="box">
-        <video
+        <!-- <video
           style="width: 100%; height:90%;object-fit:fill"
           loop
           webkit-playsinline="true"
@@ -19,15 +41,24 @@
           :src="item.url"
           @click="pauseVideo(index)"
           :playOrPause="playOrPause"
-        ></video>
-        <!-- 播放暂停按钮 -->
+        ></video> -->
         <img
+          :src="item.cover"
+          style="width: 100%; height:100%;"
+          @click="showvideo(index)"
+        />
+        <div class="myicon">
+          <van-icon name="like-o" size="18px" color="white" />
+          <span style="margin-left:5px;">12.3W</span>
+        </div>
+
+        <!-- 播放暂停按钮 -->
+        <!-- <img
           v-show="allPause ? allPause : item.isPause"
           class="icon_play"
           @click="playvideo(index)"
           src="http://npjy.oss-cn-beijing.aliyuncs.com/images/file-1575340653940esdHR.png"
-        />
-        <div>{{ item.des }}</div>
+        /> -->
       </div>
     </mescroll-vue>
   </div>
@@ -43,12 +74,13 @@ export default {
   data() {
     let u = navigator.userAgent;
     return {
+      isShowVideo: false,
       allPause: true,
       current: 0,
       isVideoShow: true,
       videoProcess: 0, //视频播放进度
       video: null,
-      iconPlayShow: -1,
+      iconPlayShow: true,
       isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
       isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       playOrPause: true,
@@ -76,6 +108,8 @@ export default {
           tip: "暂无相关数据~", //提示
         },
       },
+      videoList: [],
+      videoUrl: "",
       dataList: [
         {
           id: 0,
@@ -177,20 +211,25 @@ export default {
       //     mescroll.endErr();
       //   });
     },
+    showvideo(index) {
+      this.current = index;
+      this.isShowVideo = true;
+      this.videoUrl = this.dataList[index].url;
+    },
     // 开始播放
     playvideo(event) {
       this.allPause = false;
-      for (var i = 0; i < this.dataList.length; i++) {
-        if (event === i) {
-          this.dataList[i].isPause = !this.dataList[i].isPause;
-        } else {
-          this.dataList[i].isPause = true;
-        }
-      }
+      // for (var i = 0; i < this.dataList.length; i++) {
+      //   if (event === i) {
+      //     this.dataList[i].isPause = !this.dataList[i].isPause;
+      //   } else {
+      //     this.dataList[i].isPause = true;
+      //   }
+      // }
       this.current = event;
-      this.iconPlayShow = event;
+      //this.iconPlayShow = event;
       console.log("event", event);
-      let video = document.querySelectorAll("video")[this.current];
+      let video = document.querySelectorAll("video")[0];
       console.log("playvideo：" + this.current);
       this.isVideoShow = false;
       this.iconPlayShow = false;
@@ -218,20 +257,23 @@ export default {
       }, 100);
     },
     pauseVideo(id) {
+      //this.isShowVideo = !this.isShowVideo;
       this.allPause = false;
-      for (var i = 0; i < this.dataList.length; i++) {
-        if (id === i) {
-          this.dataList[i].isPause = !this.dataList[i].isPause;
-        } else {
-          this.dataList[i].isPause = true;
-        }
-      }
-      console.log("123213", id);
+
+      // for (var i = 0; i < this.dataList.length; i++) {
+      //   if (id === i) {
+      //     this.dataList[i].isPause = !this.dataList[i].isPause;
+      //   } else {
+      //     this.dataList[i].isPause = true;
+      //   }
+      // }
+
       //暂停\播放
 
       this.current = id;
-      this.iconPlayShow = id;
-      let video = document.querySelectorAll("video")[this.current];
+      //this.iconPlayShow = id;
+      let video = document.querySelectorAll("video")[0];
+
       console.log("pauseVideo" + this.current);
       console.log("this.playOrPause", this.playOrPause);
       if (this.playOrPause) {
@@ -253,13 +295,12 @@ export default {
           }, 100);
         }, 100);
       }
-      console.log(2222222);
       this.playOrPause = !this.playOrPause;
       this.showShareBox = false;
     },
     //记录播放进度
     changeProcess() {
-      let video = document.querySelectorAll("video")[this.current];
+      let video = document.querySelectorAll("video")[0];
       if (video) {
         let currentTime = video.currentTime.toFixed(1);
         let duration = video.duration.toFixed(1);
@@ -291,8 +332,8 @@ export default {
 .box {
   z-index: 999;
   position: relative;
-  margin: 5px;
-  width: 47%;
+  margin: 1px;
+  width: 49.4%;
   height: calc(100vh / 3);
   float: left;
   background: #fff;
@@ -302,5 +343,12 @@ export default {
   top: 0px;
   bottom: 15px;
   height: auto;
+}
+.myicon {
+  z-index: 999;
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  color: #fff;
 }
 </style>
